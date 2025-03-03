@@ -64,7 +64,7 @@ export function ConnectWithSelect({
   error: Error | undefined;
   setError: (error: Error | undefined) => void;
 }) {
-  const [desiredChainId, setDesiredChainId] = useState<number>(undefined);
+  const [desiredChainId, setDesiredChainId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (activeChainId && (!desiredChainId || desiredChainId === -1)) {
@@ -93,7 +93,12 @@ export function ConnectWithSelect({
 
         setError(undefined);
       } catch (error) {
-        setError(error);
+             setError(
+               error instanceof Error
+                 ? error
+                 : new Error("An unknown error occurred")
+             );
+
       }
     },
     [connector, activeChainId, setError]
@@ -102,15 +107,15 @@ export function ConnectWithSelect({
   return (
     <div className="flex flex-col space-y-4">
       <ChainSelect
-        activeChainId={desiredChainId}
+        activeChainId={desiredChainId!}
         switchChain={switchChain}
-        chainIds={chainIds}
+        chainIds={chainIds as number[]}
       />
 
       {isActive ? (
         error ? (
           <button
-            onClick={() => switchChain(desiredChainId)}
+            onClick={() => switchChain(desiredChainId!)}
             className="flex items-center justify-center px-4 py-2 space-x-2
                      bg-red-50 text-red-600 rounded-lg hover:bg-red-100 
                      transition-colors duration-200"
@@ -138,7 +143,7 @@ export function ConnectWithSelect({
         )
       ) : (
         <button
-          onClick={() => switchChain(desiredChainId)}
+          onClick={() => switchChain(desiredChainId!)}
           disabled={isActivating || !desiredChainId}
           className="flex items-center justify-center px-4 py-2 space-x-2
                    bg-blue-500 text-white rounded-lg hover:bg-blue-600

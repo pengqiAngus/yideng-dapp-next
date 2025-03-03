@@ -22,6 +22,12 @@ const TransferSection = ({
   loading,
   setLoading,
   setError,
+}: {
+  contract: any;
+  onSuccess: any;
+  loading: any;
+  setLoading: any;
+  setError: any;
 }) => {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
@@ -94,6 +100,11 @@ const TransferSection = ({
 
 // Main DApp Component
 const CONTRACT_ADDRESS = "0x9FD47F7E247bFd1C6BbB30Ef2f9f46E55370fFd6";
+interface StakeInfo {
+  amount: string;
+  stakingTime: string;
+  lastInterestTime: string;
+}
 
 const StakingDApp = () => {
   const { useProvider, useAccounts } = hooks;
@@ -105,7 +116,7 @@ const StakingDApp = () => {
   const [stakeAmount, setStakeAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
   const [tokenBalance, setTokenBalance] = useState("0");
-  const [stakeInfo, setStakeInfo] = useState(null);
+  const [stakeInfo, setStakeInfo] = useState<StakeInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -141,9 +152,10 @@ const StakingDApp = () => {
       const balance = await tokenContract.balanceOf(account);
       const stake = await tokenContract.stakes(account);
 
-      setTokenBalance(ethers.utils.formatEther(balance));
+        setTokenBalance(ethers.utils.formatEther(balance)); 
+        const amount= ethers.utils.formatEther(stake[0])
       setStakeInfo({
-        amount: ethers.utils.formatEther(stake[0]),
+        amount,
         stakingTime: stake[1].toString(),
         lastInterestTime: stake[2].toString(),
       });
@@ -268,7 +280,7 @@ const StakingDApp = () => {
           {/* Transfer Section */}
           <TransferSection
             contract={contract}
-            onSuccess={() => loadUserData(contract)}
+            onSuccess={() => loadUserData(contract!)}
             loading={loading}
             setLoading={setLoading}
             setError={setError}

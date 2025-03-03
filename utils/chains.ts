@@ -62,7 +62,6 @@ export const TESTNET_CHAINS: ChainConfig = {
     urls: [getInfuraUrlFor('sepolia')].filter(Boolean),
     name: 'Sepolia',
     nativeCurrency: ETH,
-    ensAddress: null,
     blockExplorerUrls: ['https://sepolia.etherscan.io'],
   },
   1337: {
@@ -70,7 +69,6 @@ export const TESTNET_CHAINS: ChainConfig = {
     name: 'Localhost',
     nativeCurrency: ETH,
     blockExplorerUrls: [],
-    ensAddress: null,
   },
 };
 
