@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "check": "opennextjs-cloudflare && tsc && wrangler deploy --dry-run",
+    "deploy": "opennextjs-cloudflare && wrangler deploy",
+    "dev": "next dev",
+    "lint": "next lint",
+    "preview": "opennextjs-cloudflare && wrangler dev",
     "start": "next start",
-    "lint": "next lint"
+    "types": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.2.0",
+    "next": "15.1.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@wagmi/core": "^2.16.4",
@@ -22,7 +26,10 @@
     "ethers": "5.7.2",
     "lucide-react": "^0.475.0",
     "viem": "^2.23.2",
-    "wagmi": "^2.14.11"
+    "wagmi": "^2.14.11",
+    "wrangler": "3.107.3",
+    "@cloudflare/workers-types": "^4.20250204.0",
+    "@opennextjs/cloudflare": "0.5.3"
   },
   "devDependencies": {
     "typescript": "^5",
