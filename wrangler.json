@@ -1,5 +1,5 @@
 {
-  "name": "next-starter-template",
+  "name": "yideng-dapp-next",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-11-01",
   "compatibility_flags": ["nodejs_compat"],
