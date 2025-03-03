@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import WalletConnectButton from "@/components/connectCard/ConnectButton";
-import { hooks, metaMask } from "@/components/connectors/metaMask";
+import { hooks, metaMask } from "@/connectors/metaMask";
 import { Accounts } from "@/components/connectCard/Accounts";
 
 const {

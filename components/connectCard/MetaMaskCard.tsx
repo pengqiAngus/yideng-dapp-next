@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 
-import { hooks, metaMask } from '@/components/connectors/metaMask';
+import { hooks, metaMask } from '@/connectors/metaMask';
 import { Card } from './Card';
 
 const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider, useENSNames } = hooks;

@@ -8,7 +8,7 @@ const Layout = ({
   return (
     <div className="h-[100vh] flex flex-col">
       <Header></Header>
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 bg-white">{children}</main>
     </div>
   );
 };
