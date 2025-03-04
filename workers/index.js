@@ -1,96 +1,49 @@
-addEventListener("fetch", (event) => {
-  event.respondWith(handleRequest(event.request));
-});
+// index.js (ES Module 格式)
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    const pathname = url.pathname;
 
-/**
- * 处理所有请求，根据路径和类型进行缓存
- * @param {Request} request - 传入的请求对象
- * @returns {Promise<Response>} - 返回响应
- */
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  const pathname = url.pathname;
-
-  // 根据路径决定缓存策略
-  if (pathname.startsWith("/api/")) {
-    return handleApiRequest(request, pathname);
-  } else if (isStaticPage(pathname)) {
-    return handleStaticPageRequest(request, pathname);
-  } else {
-    return handleSsrPageRequest(request, pathname);
-  }
-}
-
-/**
- * 处理 API 路由请求，使用 KV 缓存 JSON 数据
- * @param {Request} request - 请求对象
- * @param {string} pathname - 请求路径
- * @returns {Promise<Response>} - 响应
- */
-async function handleApiRequest(request, pathname) {
-  const cacheKey = `api:${pathname}`;
-
-  // 检查 KV 缓存
-  const cached = await MY_KV.get(cacheKey, { type: "json" });
-  if (cached) {
-    console.log("KV 缓存过了");
-    return new Response(JSON.stringify(cached), {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Cache": "HIT",
-      },
-    });
-  } else {
-    console.log("KV 没有缓存过了,开始缓存");
-  }
-
-  // 未命中缓存，请求 Next.js API
-  const response = await fetch(request);
-  if (!response.ok) {
-    return response; // 如果响应失败，直接返回
-  }
-
-  const data = await response.json();
-
-  // 存入 KV，缓存 5 分钟
-  await MY_KV.put(cacheKey, JSON.stringify(data), { expirationTtl: 300 });
-
-  return new Response(JSON.stringify(data), {
-    status: response.status,
-    headers: {
-      "Content-Type": "application/json",
-      "X-Cache": "MISS",
-    },
-  });
-}
+    if (isStaticPage(pathname)) {
+      return handleStaticPageRequest(request, pathname, env);
+    } else {
+      return handleSsrPageRequest(request, pathname, env);
+    }
+  },
+};
 
 /**
  * 处理静态页面请求，使用 KV 缓存 HTML
  * @param {Request} request - 请求对象
  * @param {string} pathname - 请求路径
+ * @param {object} env - 环境变量（包含 KV 绑定和 NEXTJS_ORIGIN）
  * @returns {Promise<Response>} - 响应
  */
-async function handleStaticPageRequest(request, pathname) {
+async function handleStaticPageRequest(request, pathname, env) {
   const cacheKey = `static:${pathname}`;
+  const MY_KV = env.MY_KV;
+  const nextJsOrigin = env.NEXTJS_ORIGIN; // 从环境变量获取 Next.js 部署地址
 
   // 检查 KV 缓存
   const cached = await MY_KV.get(cacheKey, { type: "text" });
   if (cached) {
-    console.log("KV 缓存过了");
     return new Response(cached, {
       headers: {
         "Content-Type": "text/html",
         "X-Cache": "HIT",
       },
     });
-  } else {
-    console.log("KV 没有缓存过了,开始缓存");
   }
 
-  // 未命中缓存，请求 Next.js 后端
-  const response = await fetch(request);
+  // 未命中缓存，代理到 Next.js 后端
+  const response = await fetch(`${nextJsOrigin}${pathname}`, {
+    headers: request.headers, // 传递原始请求头
+  });
   if (!response.ok) {
-    return response; // 如果响应失败，直接返回
+    return new Response("<h1>Page Not Found</h1>", {
+      status: 404,
+      headers: { "Content-Type": "text/html" },
+    });
   }
 
   const html = await response.text();
@@ -111,29 +64,34 @@ async function handleStaticPageRequest(request, pathname) {
  * 处理 SSR 页面请求，使用 KV 缓存 HTML
  * @param {Request} request - 请求对象
  * @param {string} pathname - 请求路径
+ * @param {object} env - 环境变量（包含 KV 绑定和 NEXTJS_ORIGIN）
  * @returns {Promise<Response>} - 响应
  */
-async function handleSsrPageRequest(request, pathname) {
+async function handleSsrPageRequest(request, pathname, env) {
   const cacheKey = `ssr:${pathname}`;
+  const MY_KV = env.MY_KV;
+  const nextJsOrigin = env.NEXTJS_ORIGIN;
 
   // 检查 KV 缓存
   const cached = await MY_KV.get(cacheKey, { type: "text" });
   if (cached) {
-    console.log("KV 缓存过了");
     return new Response(cached, {
       headers: {
         "Content-Type": "text/html",
         "X-Cache": "HIT",
       },
     });
-  } else {
-    console.log("KV 没有缓存过了,开始缓存");
   }
 
-  // 未命中缓存，请求 Next.js 后端
-  const response = await fetch(request);
+  // 未命中缓存，代理到 Next.js 后端
+  const response = await fetch(`${nextJsOrigin}${pathname}`, {
+    headers: request.headers, // 传递原始请求头
+  });
   if (!response.ok) {
-    return response; // 如果响应失败，直接返回
+    return new Response("<h1>Page Not Found</h1>", {
+      status: 404,
+      headers: { "Content-Type": "text/html" },
+    });
   }
 
   const html = await response.text();
@@ -156,6 +114,6 @@ async function handleSsrPageRequest(request, pathname) {
  * @returns {boolean} - 是否为静态页面
  */
 function isStaticPage(pathname) {
-  const staticPages = ["/home"];
+  const staticPages = ["/about", "/contact"];
   return staticPages.includes(pathname);
 }

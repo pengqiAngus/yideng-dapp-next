@@ -8,6 +8,7 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  
   "kv_namespaces": [
     {
       "binding": "MY_KV",
@@ -16,6 +17,14 @@
   ],
   "observability": {
     "enabled": true
+  },
+  "build": {
+    "upload": {
+      "format": "modules" 
+    }
+  },
+  "vars": {
+    "NEXTJS_ORIGIN": "https://next-starter-template.anguske2027.workers.dev/" 
   },
   "upload_source_maps": true
 }
