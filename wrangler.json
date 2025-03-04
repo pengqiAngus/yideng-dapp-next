@@ -1,6 +1,6 @@
 {
   "name": "next-starter-template",
-  "main": ".open-next/worker.js",
+  "main": "workers/index.ts",
   "compatibility_date": "2024-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "minify": true,
@@ -8,6 +8,12 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "kv_namespaces": [
+    {
+      "binding": "MY_KV",
+      "id": "3680aba5f67d491a84fa4e87c445a2af"
+    }
+  ],
   "observability": {
     "enabled": true
   },
