@@ -26,13 +26,16 @@ async function handleStaticPageRequest(request, pathname, env) {
 
   // 检查 KV 缓存
   const cached = await MY_KV.get(cacheKey, { type: "text" });
-  if (cached) {
+    if (cached) {
+      console.log('缓存过了');
     return new Response(cached, {
       headers: {
         "Content-Type": "text/html",
         "X-Cache": "HIT",
       },
     });
+    } else {
+        console.log("没有缓存过了，现在缓存");
   }
 
   // 未命中缓存，代理到 Next.js 后端
@@ -74,14 +77,17 @@ async function handleSsrPageRequest(request, pathname, env) {
 
   // 检查 KV 缓存
   const cached = await MY_KV.get(cacheKey, { type: "text" });
-  if (cached) {
-    return new Response(cached, {
-      headers: {
-        "Content-Type": "text/html",
-        "X-Cache": "HIT",
-      },
-    });
-  }
+    if (cached) {
+      console.log("缓存过了");
+      return new Response(cached, {
+        headers: {
+          "Content-Type": "text/html",
+          "X-Cache": "HIT",
+        },
+      });
+    } else {
+      console.log("没有缓存过了，现在缓存");
+    }
 
   // 未命中缓存，代理到 Next.js 后端
   const response = await fetch(`${nextJsOrigin}${pathname}`, {
