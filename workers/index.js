@@ -25,6 +25,7 @@ export default {
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
           : fetch(imageUrl, { cf: { cacheEverything: true } });
       }
+        console.log(12334)
       // The Middleware handler can return either a `Response` or a `Request`:
       // - `Response`s should be returned early
       // - `Request`s are handled by the Next server
