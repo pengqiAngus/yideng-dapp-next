@@ -25,7 +25,48 @@ export default {
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
           : fetch(imageUrl, { cf: { cacheEverything: true } });
       }
-        console.log(12334)
+         if (url.pathname === "/worker") {
+         const html = `
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>欢迎访问我的页面</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          padding: 50px;
+          background-color: #f0f0f0;
+        }
+        h1 {
+          color: #333;
+        }
+        p {
+          font-size: 18px;
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>你好，欢迎体验 Cloudflare Worker!</h1>
+      <p>这是一个通过 Worker 返回的自定义页面。</p>
+      <p>当前时间: ${new Date().toLocaleString('zh-CN')}</p>
+    </body>
+    </html>
+  `;
+  return html;
+}
+         new Response(html, {
+           headers: {
+             "Content-Type": "text/html; charset=utf-8",
+             "X-Cache": "HIT", // 可选：标记为缓存命中
+           },
+           status: 200,
+         });
+          
+         }
       // The Middleware handler can return either a `Response` or a `Request`:
       // - `Response`s should be returned early
       // - `Request`s are handled by the Next server
