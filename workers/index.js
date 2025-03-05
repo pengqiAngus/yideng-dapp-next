@@ -56,7 +56,7 @@ export default {
     </body>
     </html>
                 `;
-        new Response(html, {
+      return  new Response(html, {
           headers: {
             "Content-Type": "text/html; charset=utf-8",
             "X-Cache": "HIT", // 可选：标记为缓存命中
