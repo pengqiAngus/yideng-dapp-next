@@ -1,10 +1,10 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 // @ts-expect-error: resolved by wrangler build
-import * as nextEnvVars from "../.open-next/env/next-env.mjs";
+import * as nextEnvVars from "./env/next-env.mjs";
 // @ts-expect-error: resolved by wrangler build
-import { handler as middlewareHandler } from "../.open-next/middleware/handler.mjs";
+import { handler as middlewareHandler } from "./middleware/handler.mjs";
 // @ts-expect-error: resolved by wrangler build
-import { handler as serverHandler } from "../.open-next/server-functions/default/handler.mjs";
+import { handler as serverHandler } from "./server-functions/default/handler.mjs";
 const cloudflareContextALS = new AsyncLocalStorage();
 // Note: this symbol needs to be kept in sync with `src/api/get-cloudflare-context.ts`
 Object.defineProperty(globalThis, Symbol.for("__cloudflare-context__"), {
@@ -16,10 +16,10 @@ Object.defineProperty(globalThis, Symbol.for("__cloudflare-context__"), {
 let processEnvPopulated = false;
 export default {
   async fetch(request, env, ctx) {
-        return cloudflareContextALS.run({ env, ctx, cf: request.cf }, async () => {
-            populateProcessEnv(url, env.NEXTJS_ENV);
-            const pathname = url.pathname;
-      if (pathname === "/_next/image") {
+    return cloudflareContextALS.run({ env, ctx, cf: request.cf }, async () => {
+      const url = new URL(request.url);
+      populateProcessEnv(url, env.NEXTJS_ENV);
+      if (url.pathname === "/_next/image") {
         const imageUrl = url.searchParams.get("url") ?? "";
         return imageUrl.startsWith("/")
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
