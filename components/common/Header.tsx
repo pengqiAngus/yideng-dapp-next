@@ -30,6 +30,7 @@ const Header = () => {
         <nav className="flex items-center space-x-4">
           <Link href="/">HomePage</Link>
           <Link href="/dapp">Dapp</Link>
+          <Link href="/worker">Worker</Link>
         </nav>
         <Accounts accounts={accounts} provider={provider} ENSNames={ENSNames} />
         {/* Right side wallet button */}
