@@ -25,19 +25,6 @@ export default {
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
           : fetch(imageUrl, { cf: { cacheEverything: true } });
       }
-            
-            if (pathname === '/workers') {
-                const html = `
-                <h1>你好，欢迎体验 Cloudflare Worker!</h1>
-      <p>这是一个通过 Worker 返回的自定义页面。</p>
-                `
-         return new Response(html, {
-           headers: {
-             "Content-Type": "text/html; charset=utf-8",
-           },
-           status: 200,
-         });
-     }
       // The Middleware handler can return either a `Response` or a `Request`:
       // - `Response`s should be returned early
       // - `Request`s are handled by the Next server
