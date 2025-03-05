@@ -25,7 +25,7 @@ export default {
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
           : fetch(imageUrl, { cf: { cacheEverything: true } });
       }
-      if (url.pathname === "/worker") {
+      if (url.pathname.includes("worker")) {
         const html = `
     <!DOCTYPE html>
     <html lang="zh-CN">
