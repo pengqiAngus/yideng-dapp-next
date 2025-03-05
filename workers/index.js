@@ -1,10 +1,10 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 // @ts-expect-error: resolved by wrangler build
-import * as nextEnvVars from "./env/next-env.mjs";
+import * as nextEnvVars from "../.open-next/env/next-env.mjs";
 // @ts-expect-error: resolved by wrangler build
-import { handler as middlewareHandler } from "./middleware/handler.mjs";
+import { handler as middlewareHandler } from "../.open-next/middleware/handler.mjs";
 // @ts-expect-error: resolved by wrangler build
-import { handler as serverHandler } from "./server-functions/default/handler.mjs";
+import { handler as serverHandler } from "../.open-next/server-functions/default/handler.mjs";
 const cloudflareContextALS = new AsyncLocalStorage();
 // Note: this symbol needs to be kept in sync with `src/api/get-cloudflare-context.ts`
 Object.defineProperty(globalThis, Symbol.for("__cloudflare-context__"), {
