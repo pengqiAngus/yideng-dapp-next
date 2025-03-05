@@ -16,29 +16,28 @@ Object.defineProperty(globalThis, Symbol.for("__cloudflare-context__"), {
 let processEnvPopulated = false;
 export default {
   async fetch(request, env, ctx) {
-    return cloudflareContextALS.run({ env, ctx, cf: request.cf }, async () => {
-      populateProcessEnv(url, env.NEXTJS_ENV);
-      const pathname = url.pathname;
+        return cloudflareContextALS.run({ env, ctx, cf: request.cf }, async () => {
+            populateProcessEnv(url, env.NEXTJS_ENV);
+            const pathname = url.pathname;
       if (pathname === "/_next/image") {
         const imageUrl = url.searchParams.get("url") ?? "";
         return imageUrl.startsWith("/")
           ? env.ASSETS.fetch(new URL(imageUrl, request.url))
           : fetch(imageUrl, { cf: { cacheEverything: true } });
       }
-
-      if (pathname.includes("worker")) {
-        const html = `
-                    <h1>你好，欢迎体验 Cloudflare Worker!</h1>
-                    <p>这是一个通过 Worker 返回的自定义页面。</p>
-                    <p>当前时间: ${new Date().toLocaleString("zh-CN")}</p>
-                `;
-        return new Response(html, {
-          headers: {
-            "Content-Type": "text/html; charset=utf-8",
-          },
-          status: 200,
-        });
-      }
+            
+            if (pathname === '/workers') {
+                const html = `
+                <h1>你好，欢迎体验 Cloudflare Worker!</h1>
+      <p>这是一个通过 Worker 返回的自定义页面。</p>
+                `
+         return new Response(html, {
+           headers: {
+             "Content-Type": "text/html; charset=utf-8",
+           },
+           status: 200,
+         });
+     }
       // The Middleware handler can return either a `Response` or a `Request`:
       // - `Response`s should be returned early
       // - `Request`s are handled by the Next server
